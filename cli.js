@@ -33,6 +33,10 @@ const data = await response.json()
 
 //conditional stuff
 
+if(args.j){
+	console.log(data.daily.precipitation_hours);
+}
+
 if(data.daily.precipitation_hours[day] == 0){
 	console.log("You will not need your galsohes ");
 }
