@@ -9,21 +9,22 @@ const args = minimist(process.argv.slice(2))
 
 //help message
 if(args.h){
-	("Usage: galosh.js [options] -[n|s] LATITUDE -[e|w] LONGITUDE -z TIME_ZONE\n");
-	console.log("	-h            Show this help message and exit.\n");
-	console.log("	-n, -s        Latitude: N positive; S negative.\n");
-	console.log("	-e, -w        Longitude: E positive; W negative.\n");
-	console.log("	 -z            Time zone: uses tz.guess() from moment-timezone by default.\n");
-	console.log("	 -d 0-6        Day to retrieve weather: 0 is today; defaults to 1.\n");
-	console.log("	-j            Echo pretty JSON from open-meteo API and exit.\n");
+	
+	console.log(`Usage: galosh.js [options] -[n|s] LATITUDE -[e|w] LONGITUDE -z TIME_ZONE 
+		-h            Show this help message and exit. 
+		-n, -s        Latitude: N positive; S negative. 
+		-e, -w        Longitude: E positive; W negative. 
+		-z            Time zone: uses tz.guess() from moment-timezone by default.
+		-d 0-6        Day to retrieve weather: 0 is today; defaults to 1. 
+		-j            Echo pretty JSON from open-meteo API and exit.`);
 	process.exit(0);
 }
 
 //varables
-const latitude = args.n || -args.s
-const longitude = args.e || -args.w
-const timezone = args.z || moment.tz.guess() ||  'America/New_York'
-const day = args.d || 1
+const latitude = args.n || args.s * -1;
+let longitude = args.e || args.w * -1;
+let timezone = args.z || moment.tz.guess() 
+const day = args.d
 
 //make response
 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + latitude + '&longitude=' + longitude + '&daily=weathercode,temperature_2m_max,precipitation_hours&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=' + timezone);
@@ -34,11 +35,12 @@ const data = await response.json()
 //conditional stuff
 
 if(args.j){
-	console.log(data.daily.precipitation_hours[day]);
+	console.log(data);
+	process.exit(0);
+
 }
 
 if(data.daily.precipitation_hours[day] == 0.0){
-	
 	console.log("You will not need your galsohes ");
 }
 else{
